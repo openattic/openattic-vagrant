@@ -132,6 +132,8 @@ Vagrant.configure("2") do |config|
 
       zypper -n up
       zypper -n install salt-minion
+      systemctl enable salt-minion
+      (sleep 10; reboot) &
     SHELL
   end
 
@@ -171,6 +173,8 @@ Vagrant.configure("2") do |config|
 
       zypper -n up
       zypper -n install salt-minion
+      systemctl enable salt-minion
+      (sleep 10; reboot) &
     SHELL
   end
 
@@ -210,6 +214,8 @@ Vagrant.configure("2") do |config|
 
       zypper -n up
       zypper -n install salt-minion
+      systemctl enable salt-minion
+      (sleep 10; reboot) &
     SHELL
   end
 
