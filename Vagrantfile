@@ -57,7 +57,7 @@ Vagrant.configure("2") do |config|
                               destination:".ssh/id_rsa.pub"
 
     salt.vm.provision "file", source: "bin",
-                              destination:"bin"
+                              destination:"."
     
     salt.vm.synced_folder openattic_repo, '/home/vagrant/openattic', type: 'nfs',
                             :nfs_export => nfs_auto_export,

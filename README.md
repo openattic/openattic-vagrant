@@ -39,12 +39,12 @@ Configuration resides in the `settings.yml` file that contains the custom config
 
 ## Spin up cluster
 
-* Run `vagrant up` and wait a few minutes
+* Run `vagrant up && vagrant halt salt && vagrant up salt` and wait a few minutes
 * Connect to salt VM: `vagrant ssh salt`
-* Start openattic-docker: `run-openattic-docker.sh`
+* Start openattic-docker: `oa-docker-run.sh`
 * Access openATTIC at: [http://192.168.100.200/openattic](http://192.168.100.200/openattic)
 
-> You can connect to any VM via SSH using vagrant ssh (e.g.: `vagrant ssh node1`).
+> You can execute `oa-docker-bash.sh` on `salt` VM to acces openATTIC docker container
 
 ## NFS sharing when running libvirt in a remote host
 
