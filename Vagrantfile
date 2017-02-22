@@ -14,13 +14,16 @@ openattic_repo = settings.has_key?('openattic_repo') ?
                  settings['openattic_repo'] : "~/openattic"
 
 deepsea_repo = settings.has_key?('deepsea_repo') ?
-                 settings['deepsea_repo'] : "~/DeepSea"
+               settings['deepsea_repo'] : "~/DeepSea"
 
 num_volumes = settings.has_key?('vm_num_volumes') ?
               settings['vm_num_volumes'] : 2
 
 volume_size = settings.has_key?('vm_volume_size') ?
               settings['vm_volume_size'] : '8G'
+
+nfs_auto_export = settings.has_key?('nfs_auto_export') ?
+                  settings['nfs_auto_export'] : true
 
 Vagrant.configure("2") do |config|
   config.vm.box = "opensuse/openSUSE-42.1-x86_64"
@@ -54,10 +57,16 @@ Vagrant.configure("2") do |config|
                               destination:".ssh/id_rsa.pub"
 
     salt.vm.synced_folder openattic_repo, '/home/vagrant/openattic', type: 'nfs',
-                            :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1']
+                            :nfs_export => nfs_auto_export,
+                            :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1'],
+                            :linux__nfs_options => ['rw','no_subtree_check','all_squash','insecure']
 
     salt.vm.synced_folder deepsea_repo, '/home/vagrant/DeepSea', type: 'nfs',
-                            :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1']
+                            :nfs_export => nfs_auto_export,
+                            :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1'],
+                            :linux__nfs_options => ['rw','no_subtree_check','all_squash','insecure']
+
+    config.vm.synced_folder ".", "/vagrant", disabled: true
 
     salt.vm.provision "shell", inline: <<-SHELL
       echo "192.168.100.200 salt" >> /etc/hosts
