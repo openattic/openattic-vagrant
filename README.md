@@ -44,7 +44,7 @@ Configuration resides in the `settings.yml` file that contains the custom config
 * Start openattic-docker: `oa-docker-run.sh`
 * Access openATTIC at: [http://192.168.100.200/openattic](http://192.168.100.200/openattic)
 
-> You can execute `oa-docker-bash.sh` on `salt` VM to acces openATTIC docker container
+> You can execute `oa-docker-bash.sh` on `salt` VM to access openATTIC docker container
 
 ## NFS sharing when running libvirt in a remote host
 
