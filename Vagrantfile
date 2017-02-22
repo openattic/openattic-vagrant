@@ -69,6 +69,8 @@ Vagrant.configure("2") do |config|
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
     salt.vm.provision "shell", inline: <<-SHELL
+      SuSEfirewall2 off
+
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
@@ -116,6 +118,8 @@ Vagrant.configure("2") do |config|
     end
 
     node.vm.provision "shell", inline: <<-SHELL
+      SuSEfirewall2 off
+
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
@@ -153,6 +157,8 @@ Vagrant.configure("2") do |config|
     end
 
     node.vm.provision "shell", inline: <<-SHELL
+      SuSEfirewall2 off
+
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
@@ -194,6 +200,8 @@ Vagrant.configure("2") do |config|
     end
 
     node.vm.provision "shell", inline: <<-SHELL
+      SuSEfirewall2 off
+
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
