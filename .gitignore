@@ -1,3 +1,4 @@
 settings.yml
 .idea
+.vagrant
 *.log
