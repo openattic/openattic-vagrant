@@ -10,3 +10,5 @@ vm_cpus: 2
 vm_storage_pool: default
 vm_num_volumes: 2
 vm_volume_size: 8G
+
+nfs_auto_export: true
