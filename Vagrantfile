@@ -84,15 +84,16 @@ Vagrant.configure("2") do |config|
       zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
-      zypper ar \
-        https://yum.dockerproject.org/repo/main/opensuse/13.2/ \
-        docker-main
+      zypper ar https://yum.dockerproject.org/repo/main/opensuse/13.2/ docker-main
       zypper --no-gpg-checks ref
       zypper -n --no-gpg-checks install docker-engine
       zypper rr docker-main
 
       systemctl enable docker
       systemctl restart docker
+
+      zypper -n install ntp
+      systemctl enable ntpd
 
       git clone https://github.com/openattic/openattic-docker.git
       cd openattic-docker
@@ -135,6 +136,7 @@ Vagrant.configure("2") do |config|
       zypper --gpg-auto-import-keys ref
 
       zypper -n up
+      zypper -n install ntp
       zypper -n install salt-minion
       systemctl enable salt-minion
       (sleep 10; reboot) &
@@ -178,6 +180,7 @@ Vagrant.configure("2") do |config|
       zypper --gpg-auto-import-keys ref
 
       zypper -n up
+      zypper -n install ntp
       zypper -n install salt-minion
       systemctl enable salt-minion
       (sleep 10; reboot) &
@@ -221,6 +224,7 @@ Vagrant.configure("2") do |config|
       zypper --gpg-auto-import-keys ref
 
       zypper -n up
+      zypper -n install ntp
       zypper -n install salt-minion
       systemctl enable salt-minion
       (sleep 10; reboot) &
