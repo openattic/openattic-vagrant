@@ -84,6 +84,8 @@ Vagrant.configure("2") do |config|
       cp /home/vagrant/.ssh/id_rsa* /root/.ssh/
       cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 
+      chmod 755 -R bin/
+
       zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
