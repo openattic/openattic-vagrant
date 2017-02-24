@@ -134,13 +134,13 @@ Vagrant.configure("2") do |config|
 
         cat > /srv/salt/ceph/updates/default_my.sls <<EOF
 dummy command:
-  cmd.run:
-    - name: "ls"
-    - shell: /bin/bash
+  test.nop
 EOF
         cp /srv/salt/ceph/updates/default_my.sls /srv/salt/ceph/updates/restart
         sed -i 's/default/default_my/g' /srv/salt/ceph/updates/init.sls
         sed -i 's/default/default_my/g' /srv/salt/ceph/updates/restart/init.sls
+        cp /srv/salt/ceph/updates/default_my.sls /srv/salt/ceph/time
+        sed -i 's/default/default_my/g' /srv/salt/ceph/time/init.sls
 
         chown -R salt:salt /srv/pillar
         systemctl restart salt-master
