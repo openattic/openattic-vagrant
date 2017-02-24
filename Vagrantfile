@@ -98,17 +98,16 @@ Vagrant.configure("2") do |config|
       systemctl enable docker
       systemctl restart docker
 
-      zypper -n install ntp
+      zypper -n install ntp salt-minion salt-master
       systemctl enable ntpd
       systemctl start ntpd
 
-      zypper -n install salt-minion
+      systemctl enable salt-master
+      systemctl start salt-master
+      sleep 5
       systemctl enable salt-minion
       systemctl start salt-minion
 
-      zypper -n install salt-master
-      systemctl enable salt-master
-      systemctl start salt-master
 
       git clone https://github.com/openattic/openattic-docker.git
       cd openattic-docker
