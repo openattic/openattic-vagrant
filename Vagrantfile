@@ -75,8 +75,6 @@ Vagrant.configure("2") do |config|
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
     salt.vm.provision "shell", inline: <<-SHELL
-      SuSEfirewall2 off
-
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
@@ -102,12 +100,84 @@ Vagrant.configure("2") do |config|
 
       zypper -n install ntp
       systemctl enable ntpd
+      systemctl start ntpd
+
+      zypper -n install salt-minion
+      systemctl enable salt-minion
+      systemctl start salt-minion
+
+      zypper -n install salt-master
+      systemctl enable salt-master
+      systemctl start salt-master
 
       git clone https://github.com/openattic/openattic-docker.git
       cd openattic-docker
-      git checkout wip-deepsea
+      git checkout master
       cd openattic-dev/opensuse_leap_42.2
       docker build -t openattic-dev .
+
+      SuSEfirewall2 off
+
+      while : ; do
+        PROVISIONED_NODES=`ls -l /tmp/ready-* 2>/dev/null | wc -l`
+        echo "waiting for node1, node2 and node3 (${PROVISIONED_NODES}/3)";
+        [[ "${PROVISIONED_NODES}" != "3" ]] || break
+        sleep 2;
+        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node1;
+        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node2;
+        scp -o StrictHostKeyChecking=no node3:/tmp/ready /tmp/ready-node3;
+      done
+
+      salt-key -Ay
+
+      cd /home/vagrant/DeepSea
+      if [[ -e Makefile ]]; then
+        make install
+        sed -i "s/_REPLACE_ME_/`hostname -f`/" /srv/pillar/ceph/master_minion.sls
+        sed -i -e 's/v\.storage()/#v.storage()/g' -e 's/v\.ganesha()/#v.ganesha()/g' /srv/modules/runners/validate.py
+
+        cat > /srv/salt/ceph/updates/default_my.sls <<EOF
+dummy command:
+  cmd.run:
+    - name: "ls"
+    - shell: /bin/bash
+EOF
+        cp /srv/salt/ceph/updates/default_my.sls /srv/salt/ceph/updates/restart
+        sed -i 's/default/default_my/g' /srv/salt/ceph/updates/init.sls
+        sed -i 's/default/default_my/g' /srv/salt/ceph/updates/restart/init.sls
+
+        chown -R salt:salt /srv/pillar
+        systemctl restart salt-master
+        sleep 5
+        echo "[DeepSea] Stage 0 - prep"
+        salt-run state.orch ceph.stage.prep
+        sleep 10
+        echo "[DeepSea] Stage 1 - discovery"
+        salt-run state.orch ceph.stage.discovery
+        cat > /srv/pillar/ceph/proposals/policy.cfg <<EOF
+# Cluster assignment
+cluster-ceph/cluster/*.sls
+# Hardware Profile
+profile-*-1/cluster/*.sls
+profile-*-1/stack/default/ceph/minions/*yml
+# Common configuration
+config/stack/default/global.yml
+config/stack/default/ceph/cluster.yml
+# Role assignment
+role-master/cluster/salt.sls
+role-admin/cluster/salt.sls
+role-mon/cluster/node*.sls
+role-igw/cluster/node[12]*.sls
+role-mon/stack/default/ceph/minions/node*.yml
+EOF
+        chown salt:salt /srv/pillar/ceph/proposals/policy.cfg
+        sleep 2
+        echo "[DeepSea] Stage 2 - configure"
+        salt-run state.orch ceph.stage.configure
+        sleep 5
+        echo "[DeepSea] Stage 3 - deploy"
+        salt-run state.orch ceph.stage.deploy
+      fi
     SHELL
   end
 
@@ -156,11 +226,12 @@ Vagrant.configure("2") do |config|
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
 
-      zypper -n up
       zypper -n install ntp
       zypper -n install salt-minion
       systemctl enable salt-minion
-      (sleep 10; reboot) &
+      systemctl start salt-minion
+
+      touch /tmp/ready
     SHELL
   end
 
@@ -213,11 +284,12 @@ Vagrant.configure("2") do |config|
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
 
-      zypper -n up
       zypper -n install ntp
       zypper -n install salt-minion
       systemctl enable salt-minion
-      (sleep 10; reboot) &
+      systemctl start salt-minion
+
+      touch /tmp/ready
     SHELL
   end
 
@@ -270,11 +342,12 @@ Vagrant.configure("2") do |config|
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
 
-      zypper -n up
       zypper -n install ntp
       zypper -n install salt-minion
       systemctl enable salt-minion
-      (sleep 10; reboot) &
+      systemctl start salt-minion
+
+      touch /tmp/ready
     SHELL
   end
 
