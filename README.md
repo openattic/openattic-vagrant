@@ -17,27 +17,28 @@ Vagrant will instantiate four VMs using an `opensuse/openSUSE-42.1-x86_64` box:
 * Local copy of the [openATTIC repository](https://bitbucket.org/openattic/openattic)
 * Local copy of the [DeepSea repository](https://github.com/SUSE/DeepSea)
 
-## Setting up configuration
+## Setup 
 
-Configuration resides in the `settings.yml` file that contains the custom configuration to spin up the cluster. See [`settings.sample.yml`](settings.sample.yml) for an example of the `settings.yml` that you must create.
+Configuration resides in the `settings.yml` file that contains the custom configuration to spin up the cluster. See 
+[`settings.sample.yml`](settings.sample.yml) for an example of the `settings.yml` that you must create.
 
-### Settings options:
+### settings.yml
 
 | Option |  Type    | Default | Description |
 |----------| ----------| --------| --------|
 | `openattic_repo` | string | `~/openattic` | Path to the local copy of the openATTIC repository |
 | `deepsea_repo` | string | `~/DeepSea` | Path to the local copy of the DeepSea repository |
-| `libvirt_host` | IP address | none | TODO |
-| `libvirt_user` | string | none | TODO |
-| `libvirt_use_ssl` | boolean | none | TODO |
-| `vm_memory` | integer |  `4096` | TODO |
-| `vm_cpus`| integer |  `2` | TODO |
-| `vm_storage_pool` | string | none | TODO |
-| `vm_num_volumes` | integer |  `2`| TODO |
-| `vm_volume_size` |  binary size | `8G`| TODO |
-| `nfs_auto_export` | boolean | `true` | enables/disables vagrant from changing the contents of `/etc/exports`
+| `libvirt_host` | IP address | none |  |
+| `libvirt_user` | string | none |  |
+| `libvirt_use_ssl` | boolean | none |  |
+| `vm_memory` | integer |  `4096` | VM memory |
+| `vm_cpus`| integer |  `2` | VM CPUs |
+| `vm_storage_pool` | string | none | VM storage pool |
+| `vm_num_volumes` | integer |  `2`| VM volumes number |
+| `vm_volume_size` |  binary size | `8G`| VM volume size |
+| `nfs_auto_export` | boolean | `true` | Enables/disables vagrant from changing the contents of `/etc/exports`
 
-## Spin up cluster
+### Spin up cluster
 
 * Run `vagrant up && vagrant halt salt && vagrant up salt` and wait a few minutes
 * Connect to salt VM: `vagrant ssh salt`
@@ -46,7 +47,43 @@ Configuration resides in the `settings.yml` file that contains the custom config
 
 > You can execute `oa-docker-bash.sh` on `salt` VM to access openATTIC docker container
 
-## NFS sharing when running libvirt in a remote host
+## Running tests
+
+### E2E tests
+This development environment is ready to run all ceph e2e tests.
+Follow the [openATTIC Web UI Tests - E2E Test Suite](http://docs.openattic.org/2.0/developer_docs/dev_e2e.html) documentation 
+to install `protractor`and use the following `configs.js` file to run e2e tests:
+
+```
+'use strict';
+(function(){
+  module.exports = {
+    url     : 'http://192.168.100.200/openattic/#/login',
+    username: 'openattic',
+    password: 'openattic',
+    sleep   : 2000,
+    outDir: '/tmp',
+    cephCluster: {
+      cluster1: {
+        name: 'ceph',
+        pools: {
+          cephPool1: {
+            name    : 'rbd',
+            size    : '5.91',
+            unit    : 'GB',
+            writable: true
+          }
+        }
+      }
+    }
+  };
+}());
+```
+> TODO : Add suport to run all e2e tests...
+
+## Other settings
+
+### NFS sharing when running libvirt in a remote host
 
 When using Vagrant to spin up a VM running in a remote libvirt host, Vagrant
 will have trouble exporting the NFS shared folders to the VM due to the way
