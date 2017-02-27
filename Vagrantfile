@@ -194,8 +194,6 @@ EOF
     end
 
     node.vm.provision "shell", inline: <<-SHELL
-      SuSEfirewall2 off
-
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
@@ -210,6 +208,8 @@ EOF
       zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo 
       zypper --gpg-auto-import-keys ref
+
+      SuSEfirewall2 off
 
       zypper -n install ntp
       zypper -n install salt-minion
@@ -236,8 +236,6 @@ EOF
     end
 
     node.vm.provision "shell", inline: <<-SHELL
-      SuSEfirewall2 off
-
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
@@ -256,6 +254,8 @@ EOF
       zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
+
+      SuSEfirewall2 off
 
       zypper -n install ntp
       zypper -n install salt-minion
@@ -282,8 +282,6 @@ EOF
     end
 
     node.vm.provision "shell", inline: <<-SHELL
-      SuSEfirewall2 off
-
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
@@ -303,6 +301,7 @@ EOF
       zypper --gpg-auto-import-keys ref
       hostname node3
 
+      SuSEfirewall2 off
 
       zypper -n install ntp
       zypper -n install salt-minion
