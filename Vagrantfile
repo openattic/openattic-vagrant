@@ -148,6 +148,11 @@ EOF
         sleep 5
         echo "[DeepSea] Stage 0 - prep"
         salt-run state.orch ceph.stage.prep
+
+        sleep 5
+        echo "[DeepSea] Installing and Activating Salt-API"
+        salt-call state.apply ceph.cherrypy
+
         sleep 10
         echo "[DeepSea] Stage 1 - discovery"
         salt-run state.orch ceph.stage.discovery
