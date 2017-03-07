@@ -148,11 +148,11 @@ EOF
 
         chown -R salt:salt /srv/pillar
         systemctl restart salt-master
-        sleep 5
+        sleep 10
         echo "[DeepSea] Stage 0 - prep"
         salt-run state.orch ceph.stage.prep
 
-        sleep 5
+        sleep 10
         echo "[DeepSea] Installing and Activating Salt-API"
         salt-call state.apply ceph.cherrypy
 
