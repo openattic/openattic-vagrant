@@ -130,7 +130,6 @@ Vagrant.configure("2") do |config|
       cd /home/vagrant/DeepSea
       if [[ -e Makefile ]]; then
         make install
-        sed -i -e 's/v\.storage()/#v.storage()/g' -e 's/v\.ganesha()/#v.ganesha()/g' /srv/modules/runners/validate.py
 
         cat > /srv/salt/ceph/updates/default_my.sls <<EOF
 dummy command:
@@ -177,7 +176,7 @@ EOF
         salt-run state.orch ceph.stage.configure
         sleep 5
         echo "[DeepSea] Stage 3 - deploy"
-        salt-run state.orch ceph.stage.deploy
+        DEPLOY_ENV='dev' salt-run state.orch ceph.stage.deploy
       fi
     SHELL
   end
