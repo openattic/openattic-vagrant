@@ -130,7 +130,6 @@ Vagrant.configure("2") do |config|
       cd /home/vagrant/DeepSea
       if [[ -e Makefile ]]; then
         make install
-        sed -i "s/_REPLACE_ME_/`hostname -f`/" /srv/pillar/ceph/master_minion.sls
         sed -i -e 's/v\.storage()/#v.storage()/g' -e 's/v\.ganesha()/#v.ganesha()/g' /srv/modules/runners/validate.py
 
         cat > /srv/salt/ceph/updates/default_my.sls <<EOF
