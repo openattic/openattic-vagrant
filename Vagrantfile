@@ -186,7 +186,7 @@ EOF
         salt-run state.orch ceph.stage.configure
         sleep 5
         echo "[DeepSea] Stage 3 - deploy"
-        DEPLOY_ENV='dev' salt-run state.orch ceph.stage.deploy
+        DEV_ENV='true' salt-run state.orch ceph.stage.deploy
       fi
     SHELL
   end
