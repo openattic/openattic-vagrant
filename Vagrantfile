@@ -16,6 +16,13 @@ openattic_repo = settings.has_key?('openattic_repo') ?
 deepsea_repo = settings.has_key?('deepsea_repo') ?
                settings['deepsea_repo'] : "~/DeepSea"
 
+openattic_docker_repo = settings.has_key?('openattic_docker_repo') ?
+                        settings['openattic_docker_repo'] :
+                        'https://github.com/openattic/openattic-docker.git'
+
+openattic_docker_branch = settings.has_key?('openattic_docker_branch') ?
+                          settings['openattic_docker_branch'] : 'master'
+
 num_volumes = settings.has_key?('vm_num_volumes') ?
               settings['vm_num_volumes'] : 2
 
@@ -110,9 +117,9 @@ Vagrant.configure("2") do |config|
       systemctl start salt-minion
 
 
-      git clone https://github.com/openattic/openattic-docker.git
+      git clone #{openattic_docker_repo} openattic-docker
       cd openattic-docker
-      git checkout master
+      git checkout #{openattic_docker_branch}
       cd openattic-dev/opensuse_leap_42.2
       docker build -t openattic-dev .
 
