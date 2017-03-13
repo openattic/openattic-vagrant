@@ -28,6 +28,8 @@ Configuration resides in the `settings.yml` file that contains the custom config
 |----------| ----------| --------| --------|
 | `openattic_repo` | string | `~/openattic` | Path to the local copy of the openATTIC repository |
 | `deepsea_repo` | string | `~/DeepSea` | Path to the local copy of the DeepSea repository |
+| `openattic_docker_repo` | string | `https://github.com/openattic/openattic-docker.git` | openattic-docker git url |
+| `openattic_docker_branch` | string | `master` | openattic-docker git branch |
 | `libvirt_host` | IP address | none |  |
 | `libvirt_user` | string | none |  |
 | `libvirt_use_ssl` | boolean | none |  |
