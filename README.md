@@ -45,9 +45,18 @@ Configuration resides in the `settings.yml` file that contains the custom config
 * Run `vagrant up && vagrant halt salt && vagrant up salt` and wait a few minutes
 * Connect to salt VM: `vagrant ssh salt`
 * Start openattic-docker: `oa-docker-run.sh`
+
+#### - Using docker
+* Start openattic-docker: `oa-docker-run.sh`
 * Access openATTIC at: [http://192.168.100.200/openattic](http://192.168.100.200/openattic)
 
 > You can execute `oa-docker-bash.sh` on `salt` VM to access openATTIC docker container
+
+#### - Without using docker
+* Install openattic: `sudo oa-install.sh` **WARNING: (this will only work after [PR #695](https://bitbucket.org/openattic/openattic/pull-requests/695/support-for-ceph-on-vagrant-provision/diff) is merged)**
+* Activate virtual env: `. env/bin/activate`
+* Run server: `$ python openattic/backend/manage.py runserver 0.0.0.0:8001`
+* Access openATTIC at: [http://192.168.100.200:8001](http://192.168.100.200:8001)
 
 ## Running tests
 
