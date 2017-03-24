@@ -54,9 +54,9 @@ Configuration resides in the `settings.yml` file that contains the custom config
     using docker will only work for ceph modules development and can't be used for local storage features development.
     For more information see [openattic-docker issue #9](https://github.com/openattic/openattic-docker/issues/9).
 2) **Without using docker**
-    * Install openattic: `sudo oa-install.sh` **WARNING: (this will only work after [PR #695](https://bitbucket.org/openattic/openattic/pull-requests/695/support-for-ceph-on-vagrant-provision/diff) is merged)**
+    * Install openattic: `sudo bin/oa-install.sh` **WARNING: (this will only work after [PR #695](https://bitbucket.org/openattic/openattic/pull-requests/695/support-for-ceph-on-vagrant-provision/diff) is merged)**
     * Activate virtual env: `. env/bin/activate`
-    * Run server: `$ python openattic/backend/manage.py runserver 0.0.0.0:8001`
+    * Run server: `python openattic/backend/manage.py runserver 0.0.0.0:8001`
     * Access openATTIC at: [http://192.168.100.200:8001](http://192.168.100.200:8001)
 
 ## Running tests
