@@ -44,7 +44,10 @@ Vagrant.configure("2") do |config|
     if settings.has_key?('vm_storage_pool') then
       lv.storage_pool_name = settings['vm_storage_pool']
     end
-
+  end
+  config.vm.provider :virtualbox do |vb|
+    vb.memory = settings.has_key?('vm_memory') ? settings['vm_memory'] : 4096
+    vb.cpus = settings.has_key?('vm_cpus') ? settings['vm_cpus'] : 2
   end
 
   config.vm.define :salt do |salt|
@@ -58,7 +61,7 @@ Vagrant.configure("2") do |config|
 
     salt.vm.provision "file", source: "bin",
                               destination:"."
-    
+
     salt.vm.synced_folder openattic_repo, '/home/vagrant/openattic', type: 'nfs',
                             :nfs_export => nfs_auto_export,
                             :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1'],
@@ -122,6 +125,19 @@ Vagrant.configure("2") do |config|
         lv.storage :file, size: volume_size, type: 'raw'
       end
     end
+    node.vm.provider :virtualbox do |vb|
+      for i in 1..num_volumes do
+        file_to_disk = "./disks/#{node.vm.hostname}-disk#{i}.vmdk"
+        unless File.exist?(file_to_disk)
+          vb.customize ['createmedium', 'disk', '--filename', file_to_disk,
+            '--size', volume_size]
+          vb.customize ['storageattach', :id,
+            '--storagectl', 'SATA Controller',
+            '--port', i, '--device', 0,
+            '--type', 'hdd', '--medium', file_to_disk]
+        end
+      end
+    end
 
     node.vm.provision "shell", inline: <<-SHELL
       SuSEfirewall2 off
@@ -137,7 +153,7 @@ Vagrant.configure("2") do |config|
       cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 
       zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
-      zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo 
+      zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
 
       zypper -n up
@@ -160,6 +176,19 @@ Vagrant.configure("2") do |config|
     node.vm.provider "libvirt" do |lv|
       (1..num_volumes).each do |d|
         lv.storage :file, size: volume_size, type: 'raw'
+      end
+    end
+    node.vm.provider :virtualbox do |vb|
+      for i in 1..num_volumes do
+        file_to_disk = "./disks/#{node.vm.hostname}-disk#{i}.vmdk"
+        unless File.exist?(file_to_disk)
+          vb.customize ['createmedium', 'disk', '--filename', file_to_disk,
+            '--size', volume_size]
+          vb.customize ['storageattach', :id,
+            '--storagectl', 'SATA Controller',
+            '--port', i, '--device', 0,
+            '--type', 'hdd', '--medium', file_to_disk]
+        end
       end
     end
 
@@ -206,6 +235,19 @@ Vagrant.configure("2") do |config|
         lv.storage :file, size: volume_size, type: 'raw'
       end
     end
+    node.vm.provider :virtualbox do |vb|
+      for i in 1..num_volumes do
+        file_to_disk = "./disks/#{node.vm.hostname}-disk#{i}.vmdk"
+        unless File.exist?(file_to_disk)
+          vb.customize ['createmedium', 'disk', '--filename', file_to_disk,
+            '--size', volume_size]
+          vb.customize ['storageattach', :id,
+            '--storagectl', 'SATA Controller',
+            '--port', i, '--device', 0,
+            '--type', 'hdd', '--medium', file_to_disk]
+        end
+      end
+    end
 
     node.vm.provision "shell", inline: <<-SHELL
       SuSEfirewall2 off
@@ -225,7 +267,7 @@ Vagrant.configure("2") do |config|
       ssh-keyscan -H node2 >> ~/.ssh/known_hosts
 
       zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
-      zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo 
+      zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
 
       zypper -n up
