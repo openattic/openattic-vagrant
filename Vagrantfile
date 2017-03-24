@@ -86,6 +86,19 @@ Vagrant.configure("2") do |config|
         lv.storage :file, size: volume_size, type: 'raw', :bus => 'scsi'
       end
     end
+    salt.vm.provider :virtualbox do |vb|
+      for i in 1..num_volumes do
+        file_to_disk = "./disks/#{salt.vm.hostname}-disk#{i}.vmdk"
+        unless File.exist?(file_to_disk)
+          vb.customize ['createmedium', 'disk', '--filename', file_to_disk,
+            '--size', volume_size]
+          vb.customize ['storageattach', :id,
+            '--storagectl', 'SATA Controller',
+            '--port', i, '--device', 0,
+            '--type', 'hdd', '--medium', file_to_disk]
+        end
+      end
+    end
 
     salt.vm.provision "shell", inline: <<-SHELL
       echo "192.168.100.200 salt" >> /etc/hosts
