@@ -49,6 +49,11 @@ Configuration resides in the `settings.yml` file that contains the custom config
 #### - Using docker
 * Start openattic-docker: `oa-docker-run.sh`
 * Access openATTIC at: [http://192.168.100.200/openattic](http://192.168.100.200/openattic)
+    
+##### Known limitations: 
+
+using docker will only work for ceph modules development and can't be used for local storage features development.
+For more information see [openattic-docker issue #9](https://github.com/openattic/openattic-docker/issues/9).
 
 > You can execute `oa-docker-bash.sh` on `salt` VM to access openATTIC docker container
 
