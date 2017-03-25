@@ -42,7 +42,7 @@ Configuration resides in the `settings.yml` file that contains the custom config
 
 ### Spin up cluster
 
-* Run `vagrant up && vagrant halt salt && vagrant up salt` and wait a few minutes
+* Run `vagrant up` and wait a few minutes
 * Connect to salt VM: `vagrant ssh salt`
 * Now you should choose if you want to use docker (1) or not (2)
 1) **Using docker**
