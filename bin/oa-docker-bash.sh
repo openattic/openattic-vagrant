@@ -1,1 +1,1 @@
-sudo docker exec -ti `sudo docker ps -qa` bash
+sudo docker exec -ti `sudo docker ps -qa | head -1` bash

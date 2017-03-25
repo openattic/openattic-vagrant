@@ -6,7 +6,7 @@ Vagrant will instantiate four VMs using an `opensuse/openSUSE-42.1-x86_64` box:
 
 | VM  |  IP | Description |
 |----------| ----------|----------|
-| `salt` | 192.168.100.200 | This VM will run [openattic-docker](https://github.com/openattic/openattic-docker) container (salt-master + salt-minion)|
+| `salt` | 192.168.100.200 | This VM will run [openattic-docker](https://github.com/openattic/openattic-docker) container or openattic (salt-master + salt-minion)|
 | `node1` | 192.168.100.201 | This VM will run ceph (salt-minion) |
 | `node2` | 192.168.100.202 | This VM will run ceph (salt-minion) |
 | `node3` | 192.168.100.203 | This VM will run ceph (salt-minion) |
@@ -28,6 +28,8 @@ Configuration resides in the `settings.yml` file that contains the custom config
 |----------| ----------| --------| --------|
 | `openattic_repo` | string | `~/openattic` | Path to the local copy of the openATTIC repository |
 | `deepsea_repo` | string | `~/DeepSea` | Path to the local copy of the DeepSea repository |
+| `openattic_docker_repo` | string | `https://github.com/openattic/openattic-docker.git` | openattic-docker git url |
+| `openattic_docker_branch` | string | `master` | openattic-docker git branch |
 | `libvirt_host` | IP address | none |  |
 | `libvirt_user` | string | none |  |
 | `libvirt_use_ssl` | boolean | none |  |
@@ -42,10 +44,20 @@ Configuration resides in the `settings.yml` file that contains the custom config
 
 * Run `vagrant up && vagrant halt salt && vagrant up salt` and wait a few minutes
 * Connect to salt VM: `vagrant ssh salt`
-* Start openattic-docker: `oa-docker-run.sh`
-* Access openATTIC at: [http://192.168.100.200/openattic](http://192.168.100.200/openattic)
+* Now you should choose if you want to use docker (1) or not (2)
+1) **Using docker**
+    * Start openattic-docker: `oa-docker-run.sh`
+    * Access openATTIC at: [http://192.168.100.200/openattic](http://192.168.100.200/openattic)
+    > You can execute `oa-docker-bash.sh` on `salt` VM to access openATTIC docker container    
 
-> You can execute `oa-docker-bash.sh` on `salt` VM to access openATTIC docker container
+    **Known limitations**: 
+    using docker will only work for ceph modules development and can't be used for local storage features development.
+    For more information see [openattic-docker issue #9](https://github.com/openattic/openattic-docker/issues/9).
+2) **Without using docker**
+    * Install openattic: `sudo bin/oa-install.sh`
+    * Activate virtual env: `. env/bin/activate`
+    * Run server: `python openattic/backend/manage.py runserver 0.0.0.0:8001`
+    * Access openATTIC at: [http://192.168.100.200:8001](http://192.168.100.200:8001)
 
 ## Running tests
 
