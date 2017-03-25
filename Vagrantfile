@@ -33,6 +33,8 @@ nfs_auto_export = settings.has_key?('nfs_auto_export') ?
                   settings['nfs_auto_export'] : true
 
 Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+
   config.vm.box = "opensuse/openSUSE-42.1-x86_64"
 
   config.vm.provider "libvirt" do |lv|
