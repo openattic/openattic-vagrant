@@ -1,3 +1,7 @@
+for container in $(sudo docker ps -qa); do
+  sudo docker rm -f $container
+done
+
 sudo docker run -t \
   -v /home/vagrant/openattic:/srv/openattic \
   -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
