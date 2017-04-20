@@ -35,7 +35,7 @@ nfs_auto_export = settings.has_key?('nfs_auto_export') ?
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
 
-  config.vm.box = "opensuse/openSUSE-42.1-x86_64"
+  config.vm.box = "opensuse/openSUSE-42.2-x86_64"
 
   config.vm.provider "libvirt" do |lv|
     if settings.has_key?('libvirt_host') then
@@ -99,7 +99,7 @@ Vagrant.configure("2") do |config|
       cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
       hostname node1
 
-      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
+      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
 
@@ -158,7 +158,7 @@ Vagrant.configure("2") do |config|
       ssh-keyscan -H node1 >> ~/.ssh/known_hosts
       ssh-keyscan -H node3 >> ~/.ssh/known_hosts
 
-      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
+      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
 
@@ -216,7 +216,7 @@ Vagrant.configure("2") do |config|
       ssh-keyscan -H node1 >> ~/.ssh/known_hosts
       ssh-keyscan -H node2 >> ~/.ssh/known_hosts
 
-      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
+      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
       hostname node3
@@ -289,7 +289,7 @@ Vagrant.configure("2") do |config|
 
       chmod 755 -R bin/
 
-      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
+      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
       zypper ar https://yum.dockerproject.org/repo/main/opensuse/13.2/ docker-main
