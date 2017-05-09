@@ -353,7 +353,7 @@ EOF
 
         sleep 10
         echo "[DeepSea] Installing and Activating Salt-API"
-        salt-call state.apply ceph.cherrypy
+        salt-call state.apply ceph.salt-api
 
         sleep 10
         echo "[DeepSea] Stage 1 - discovery"
