@@ -256,25 +256,6 @@ Vagrant.configure("2") do |config|
 
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
-    salt.vm.provider "libvirt" do |lv|
-      (1..num_volumes).each do |d|
-        lv.storage :file, size: volume_size, type: 'raw', :bus => 'scsi'
-      end
-    end
-    salt.vm.provider :virtualbox do |vb|
-      for i in 1..num_volumes do
-        file_to_disk = "./disks/#{salt.vm.hostname}-disk#{i}.vmdk"
-        unless File.exist?(file_to_disk)
-          vb.customize ['createmedium', 'disk', '--filename', file_to_disk,
-            '--size', volume_size]
-          vb.customize ['storageattach', :id,
-            '--storagectl', 'SATA Controller',
-            '--port', i, '--device', 0,
-            '--type', 'hdd', '--medium', file_to_disk]
-        end
-      end
-    end
-
     salt.vm.provision "shell", inline: <<-SHELL
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
