@@ -2,14 +2,14 @@
 
 This repository contains configuration files that simplify the setup of the development environment to work on [openATTIC](http://openattic.org) with a [ceph](https://ceph.com/) cluster managed by [DeepSea](https://github.com/SUSE/DeepSea).
 
-Vagrant will instantiate four VMs using an `opensuse/openSUSE-42.1-x86_64` box:
+Vagrant will instantiate four VMs using an `opensuse/openSUSE-42.2-x86_64` box:
 
-| VM  |  IP | Description |
-|----------| ----------|----------|
-| `salt` | 192.168.100.200 | This VM will run [openattic-docker](https://github.com/openattic/openattic-docker) container or openattic (salt-master + salt-minion)|
-| `node1` | 192.168.100.201 | This VM will run ceph (salt-minion) |
-| `node2` | 192.168.100.202 | This VM will run ceph (salt-minion) |
-| `node3` | 192.168.100.203 | This VM will run ceph (salt-minion) |
+| VM  |  IP | Roles | Description |
+|----------| ----------|----------| ----------|
+| `salt` | 192.168.100.200 | **master**, **admin** |Run [openattic-docker](https://github.com/openattic/openattic-docker) container or openattic (salt-master + salt-minion)|
+| `node1` | 192.168.100.201 | **mon**, **igw** | Run ceph (salt-minion) |
+| `node2` | 192.168.100.202 | **mon**, **igw** | Run ceph (salt-minion) |
+| `node3` | 192.168.100.203 | **mon** | Run ceph (salt-minion) |
 
 ## Requirements
 
@@ -17,9 +17,9 @@ Vagrant will instantiate four VMs using an `opensuse/openSUSE-42.1-x86_64` box:
 * Local copy of the [openATTIC repository](https://bitbucket.org/openattic/openattic)
 * Local copy of the [DeepSea repository](https://github.com/SUSE/DeepSea)
 
-## Setup 
+## Setup
 
-Configuration resides in the `settings.yml` file that contains the custom configuration to spin up the cluster. See 
+Configuration resides in the `settings.yml` file that contains the custom configuration to spin up the cluster. See
 [`settings.sample.yml`](settings.sample.yml) for an example of the `settings.yml` that you must create.
 
 ### settings.yml
@@ -48,11 +48,9 @@ Configuration resides in the `settings.yml` file that contains the custom config
 1) **Using docker**
     * Start openattic-docker: `oa-docker-run.sh`
     * Access openATTIC at: [http://192.168.100.200/openattic](http://192.168.100.200/openattic)
-    > You can execute `oa-docker-bash.sh` on `salt` VM to access openATTIC docker container    
+    > You can execute `oa-docker-bash.sh` on `salt` VM to access openATTIC docker container
+    > Use `oa-docker-log.sh` on `salt` VM  to follow the openattic.log (with colors)
 
-    **Known limitations**: 
-    using docker will only work for ceph modules development and can't be used for local storage features development.
-    For more information see [openattic-docker issue #9](https://github.com/openattic/openattic-docker/issues/9).
 2) **Without using docker**
     * Install openattic: `sudo bin/oa-install.sh`
     * Activate virtual env: `. env/bin/activate`
@@ -63,7 +61,7 @@ Configuration resides in the `settings.yml` file that contains the custom config
 
 ### E2E tests
 This development environment is ready to run all ceph e2e tests.
-Follow the [openATTIC Web UI Tests - E2E Test Suite](http://docs.openattic.org/2.0/developer_docs/dev_e2e.html) documentation 
+Follow the [openATTIC Web UI Tests - E2E Test Suite](http://docs.openattic.org/2.0/developer_docs/dev_e2e.html) documentation
 to install `protractor`and use the following `configs.js` file to run e2e tests:
 
 ```
@@ -91,7 +89,6 @@ to install `protractor`and use the following `configs.js` file to run e2e tests:
   };
 }());
 ```
-> TODO : Add suport to run all e2e tests...
 
 ## Other settings
 
