@@ -32,6 +32,9 @@ volume_size = settings.has_key?('vm_volume_size') ?
 nfs_auto_export = settings.has_key?('nfs_auto_export') ?
                   settings['nfs_auto_export'] : true
 
+build_openattic_docker_image = settings.has_key?('build_openattic_docker_image') ?
+                               settings['build_openattic_docker_image'] : true
+
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
 
@@ -296,7 +299,7 @@ Vagrant.configure("2") do |config|
       cd openattic-docker
       git checkout #{openattic_docker_branch}
       cd openattic-dev/opensuse_leap_42.2
-      docker build -t openattic-dev .
+      [[ "#{build_openattic_docker_image}" == "true" ]] && docker build -t openattic-dev .
 
       SuSEfirewall2 off
 
