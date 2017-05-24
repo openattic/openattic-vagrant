@@ -368,9 +368,12 @@ rgw_configurations:
       - { uid: "admin", name: "Admin", email: "admin@demo.nil", system: True }
 EOF
         chown salt:salt /srv/pillar/ceph/rgw.sls
+
         sleep 2
         echo "[DeepSea] Stage 2 - configure"
         salt-run state.orch ceph.stage.configure
+        sed -i 's/time_init:.*ntp/time_init: default_my/g' /srv/pillar/ceph/stack/default/global.yml
+
         sleep 5
         echo "[DeepSea] Stage 3 - deploy"
         DEV_ENV='true' salt-run state.orch ceph.stage.deploy
