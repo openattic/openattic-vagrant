@@ -71,6 +71,8 @@ Vagrant.configure("2") do |config|
     node.vm.provision "file", source: "keys/id_rsa.pub",
                               destination:".ssh/id_rsa.pub"
 
+    node.vm.synced_folder ".", "/vagrant", disabled: true
+
     node.vm.provider "libvirt" do |lv|
       (1..num_volumes).each do |d|
         lv.storage :file, size: volume_size, type: 'raw'
@@ -125,6 +127,8 @@ Vagrant.configure("2") do |config|
                               destination:".ssh/id_rsa"
     node.vm.provision "file", source: "keys/id_rsa.pub",
                               destination:".ssh/id_rsa.pub"
+
+    node.vm.synced_folder ".", "/vagrant", disabled: true
 
     node.vm.provider "libvirt" do |lv|
       (1..num_volumes).each do |d|
@@ -184,6 +188,8 @@ Vagrant.configure("2") do |config|
                               destination:".ssh/id_rsa"
     node.vm.provision "file", source: "keys/id_rsa.pub",
                               destination:".ssh/id_rsa.pub"
+
+    node.vm.synced_folder ".", "/vagrant", disabled: true
 
     node.vm.provider "libvirt" do |lv|
       (1..num_volumes).each do |d|
@@ -257,7 +263,7 @@ Vagrant.configure("2") do |config|
                             :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1'],
                             :linux__nfs_options => ['rw','no_subtree_check','all_squash','insecure']
 
-    config.vm.synced_folder ".", "/vagrant", disabled: true
+    salt.vm.synced_folder ".", "/vagrant", disabled: true
 
     salt.vm.provision "shell", inline: <<-SHELL
       echo "192.168.100.200 salt" >> /etc/hosts
