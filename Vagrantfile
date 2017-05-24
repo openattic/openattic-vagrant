@@ -33,7 +33,7 @@ nfs_auto_export = settings.has_key?('nfs_auto_export') ?
                   settings['nfs_auto_export'] : true
 
 build_openattic_docker_image = settings.has_key?('build_openattic_docker_image') ?
-                               settings['build_openattic_docker_image'] : true
+                               settings['build_openattic_docker_image'] : false
 
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
@@ -313,6 +313,7 @@ Vagrant.configure("2") do |config|
         scp -o StrictHostKeyChecking=no node3:/tmp/ready /tmp/ready-node3;
       done
 
+      sleep 5
       salt-key -Ay
 
       cd /home/vagrant/DeepSea
