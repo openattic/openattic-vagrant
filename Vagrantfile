@@ -378,9 +378,12 @@ EOF
         echo "[DeepSea] Stage 3 - deploy"
         DEV_ENV='true' salt-run state.orch ceph.stage.deploy
 
+        sleep 5
+        echo "[DeepSea] Stage 4 - services"
+        DEV_ENV='true' salt-run state.orch ceph.stage.4
+
         chmod 644 /etc/ceph/ceph.client.admin.keyring
       fi
     SHELL
   end
-  
 end
