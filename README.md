@@ -40,6 +40,7 @@ Configuration resides in the `settings.yml` file that contains the custom config
 | `vm_volume_size` |  binary size | `8G`| VM volume size |
 | `nfs_auto_export` | boolean | `true` | Enables/disables vagrant from changing the contents of `/etc/exports`
 | `build_openattic_docker_image` | boolean | `false` | Enables/disables the build of the openattic docker image during provisioning
+| `create_openattic_node` | boolean | `false` | Creates a new node to test openATTIC installations through zypper/rpm
 
 ### Spin up cluster
 

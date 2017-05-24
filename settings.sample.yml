@@ -14,3 +14,5 @@ vm_volume_size: 8G
 
 nfs_auto_export: true
 build_openattic_docker_image: true
+
+create_openattic_node: false
