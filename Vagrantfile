@@ -356,9 +356,17 @@ role-master/cluster/salt.sls
 role-admin/cluster/salt.sls
 role-mon/cluster/node*.sls
 role-igw/cluster/node[12]*.sls
+role-rgw/cluster/node[13]*.sls
 role-mon/stack/default/ceph/minions/node*.yml
 EOF
         chown salt:salt /srv/pillar/ceph/proposals/policy.cfg
+        cat > /srv/pillar/ceph/rgw.sls <<EOF
+rgw_configurations:
+  rgw:
+    users:
+      - { uid: "admin", name: "Admin", email: "admin@demo.nil", system: True }
+EOF
+        chown salt:salt /srv/pillar/ceph/rgw.sls
         sleep 2
         echo "[DeepSea] Stage 2 - configure"
         salt-run state.orch ceph.stage.configure

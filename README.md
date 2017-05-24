@@ -7,9 +7,9 @@ Vagrant will instantiate four VMs using an `opensuse/openSUSE-42.2-x86_64` box:
 | VM  |  IP | Roles | Description |
 |----------| ----------|----------| ----------|
 | `salt` | 192.168.100.200 | **master**, **admin** |Run [openattic-docker](https://github.com/openattic/openattic-docker) container or openattic (salt-master + salt-minion)|
-| `node1` | 192.168.100.201 | **mon**, **igw** | Run ceph (salt-minion) |
+| `node1` | 192.168.100.201 | **mon**, **igw**, **rgw** | Run ceph (salt-minion) |
 | `node2` | 192.168.100.202 | **mon**, **igw** | Run ceph (salt-minion) |
-| `node3` | 192.168.100.203 | **mon** | Run ceph (salt-minion) |
+| `node3` | 192.168.100.203 | **mon**, **rgw** | Run ceph (salt-minion) |
 
 ## Requirements
 
