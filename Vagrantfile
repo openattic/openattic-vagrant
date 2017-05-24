@@ -33,7 +33,7 @@ nfs_auto_export = settings.has_key?('nfs_auto_export') ?
                   settings['nfs_auto_export'] : true
 
 build_openattic_docker_image = settings.has_key?('build_openattic_docker_image') ?
-                               settings['build_openattic_docker_image'] : true
+                               settings['build_openattic_docker_image'] : false
 
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
@@ -313,6 +313,7 @@ Vagrant.configure("2") do |config|
         scp -o StrictHostKeyChecking=no node3:/tmp/ready /tmp/ready-node3;
       done
 
+      sleep 5
       salt-key -Ay
 
       cd /home/vagrant/DeepSea
@@ -356,9 +357,17 @@ role-master/cluster/salt.sls
 role-admin/cluster/salt.sls
 role-mon/cluster/node*.sls
 role-igw/cluster/node[12]*.sls
+role-rgw/cluster/node[13]*.sls
 role-mon/stack/default/ceph/minions/node*.yml
 EOF
         chown salt:salt /srv/pillar/ceph/proposals/policy.cfg
+        cat > /srv/pillar/ceph/rgw.sls <<EOF
+rgw_configurations:
+  rgw:
+    users:
+      - { uid: "admin", name: "Admin", email: "admin@demo.nil", system: True }
+EOF
+        chown salt:salt /srv/pillar/ceph/rgw.sls
         sleep 2
         echo "[DeepSea] Stage 2 - configure"
         salt-run state.orch ceph.stage.configure

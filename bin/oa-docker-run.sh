@@ -1,3 +1,9 @@
+if [[ "$(sudo docker images -q openattic-dev 2> /dev/null)" == "" ]]; then
+  pushd /home/vagrant/openattic-docker/openattic-dev/opensuse_leap_42.2
+  sudo docker build --network=host -t openattic-dev .
+  popd
+fi
+
 for container in $(sudo docker ps -qa); do
   sudo docker rm -f $container
 done
