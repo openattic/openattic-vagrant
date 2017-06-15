@@ -96,7 +96,6 @@ Vagrant.configure("2") do |config|
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
-      echo "192.168.100.203 node3" >> /etc/hosts
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
       mkdir /root/.ssh
       chmod 600 /home/vagrant/.ssh/id_rsa
@@ -153,7 +152,6 @@ Vagrant.configure("2") do |config|
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
-      echo "192.168.100.203 node3" >> /etc/hosts
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
       mkdir /root/.ssh
       chmod 600 /home/vagrant/.ssh/id_rsa
@@ -163,72 +161,10 @@ Vagrant.configure("2") do |config|
 
       ssh-keyscan -H salt >> ~/.ssh/known_hosts
       ssh-keyscan -H node1 >> ~/.ssh/known_hosts
-      ssh-keyscan -H node3 >> ~/.ssh/known_hosts
 
       zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper --gpg-auto-import-keys ref
-
-      SuSEfirewall2 off
-
-      zypper -n install ntp
-      zypper -n install salt-minion
-      systemctl enable salt-minion
-      systemctl start salt-minion
-
-      touch /tmp/ready
-    SHELL
-  end
-
-  config.vm.define :node3 do |node|
-    node.vm.hostname = "node3"
-    node.vm.network :private_network, ip: "192.168.100.203"
-
-    node.vm.provision "file", source: "keys/id_rsa",
-                              destination:".ssh/id_rsa"
-    node.vm.provision "file", source: "keys/id_rsa.pub",
-                              destination:".ssh/id_rsa.pub"
-
-    node.vm.synced_folder ".", "/vagrant", disabled: true
-
-    node.vm.provider "libvirt" do |lv|
-      (1..num_volumes).each do |d|
-        lv.storage :file, size: volume_size, type: 'raw'
-      end
-    end
-    node.vm.provider :virtualbox do |vb|
-      for i in 1..num_volumes do
-        file_to_disk = "./disks/#{node.vm.hostname}-disk#{i}.vmdk"
-        unless File.exist?(file_to_disk)
-          vb.customize ['createmedium', 'disk', '--filename', file_to_disk,
-            '--size', volume_size]
-          vb.customize ['storageattach', :id,
-            '--storagectl', 'SATA Controller',
-            '--port', i, '--device', 0,
-            '--type', 'hdd', '--medium', file_to_disk]
-        end
-      end
-    end
-
-    node.vm.provision "shell", inline: <<-SHELL
-      echo "192.168.100.200 salt" >> /etc/hosts
-      echo "192.168.100.201 node1" >> /etc/hosts
-      echo "192.168.100.202 node2" >> /etc/hosts
-      echo "192.168.100.203 node3" >> /etc/hosts
-      cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
-      mkdir /root/.ssh
-      chmod 600 /home/vagrant/.ssh/id_rsa
-      cp /home/vagrant/.ssh/id_rsa* /root/.ssh/
-      cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
-
-      ssh-keyscan -H salt >> ~/.ssh/known_hosts
-      ssh-keyscan -H node1 >> ~/.ssh/known_hosts
-      ssh-keyscan -H node2 >> ~/.ssh/known_hosts
-
-      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
-      zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
-      zypper --gpg-auto-import-keys ref
-      hostname node3
 
       SuSEfirewall2 off
 
@@ -269,7 +205,6 @@ Vagrant.configure("2") do |config|
       echo "192.168.100.200 salt" >> /etc/hosts
       echo "192.168.100.201 node1" >> /etc/hosts
       echo "192.168.100.202 node2" >> /etc/hosts
-      echo "192.168.100.203 node3" >> /etc/hosts
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
       mkdir /root/.ssh
       chmod 600 /home/vagrant/.ssh/id_rsa
@@ -311,12 +246,11 @@ Vagrant.configure("2") do |config|
 
       while : ; do
         PROVISIONED_NODES=`ls -l /tmp/ready-* 2>/dev/null | wc -l`
-        echo "waiting for node1, node2 and node3 (${PROVISIONED_NODES}/3)";
-        [[ "${PROVISIONED_NODES}" != "3" ]] || break
+        echo "waiting for node1, node2 (${PROVISIONED_NODES}/3)";
+        [[ "${PROVISIONED_NODES}" != "2" ]] || break
         sleep 2;
         scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node1;
         scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node2;
-        scp -o StrictHostKeyChecking=no node3:/tmp/ready /tmp/ready-node3;
       done
 
       sleep 5
@@ -361,9 +295,9 @@ config/stack/default/ceph/cluster.yml
 # Role assignment
 role-master/cluster/salt.sls
 role-admin/cluster/salt.sls
-role-mon/cluster/node*.sls
-role-igw/cluster/node[12]*.sls
-role-rgw/cluster/node[13]*.sls
+role-mon/cluster/node1.sls
+role-igw/cluster/node*.sls
+role-rgw/cluster/node*.sls
 role-mon/stack/default/ceph/minions/node*.yml
 EOF
         chown salt:salt /srv/pillar/ceph/proposals/policy.cfg
