@@ -63,7 +63,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :node1 do |node|
-    node.vm.hostname = "node1"
+    node.vm.hostname = "node1.oa.local"
     node.vm.network :private_network, ip: "192.168.100.201"
 
     node.vm.provision "file", source: "keys/id_rsa",
@@ -118,7 +118,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :node2 do |node|
-    node.vm.hostname = "node2"
+    node.vm.hostname = "node2.oa.local"
     node.vm.network :private_network, ip: "192.168.100.202"
 
     node.vm.provision "file", source: "keys/id_rsa",
@@ -177,7 +177,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :node3 do |node|
-    node.vm.hostname = "node3"
+    node.vm.hostname = "node3.oa.local"
     node.vm.network :private_network, ip: "192.168.100.203"
 
     node.vm.provision "file", source: "keys/id_rsa",
@@ -236,7 +236,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :salt do |salt|
-    salt.vm.hostname = "salt"
+    salt.vm.hostname = "salt.oa.local"
     salt.vm.network :private_network, ip: "192.168.100.200"
 
     salt.vm.provision "file", source: "keys/id_rsa",
@@ -353,8 +353,8 @@ profile-*-1/stack/default/ceph/minions/*yml
 config/stack/default/global.yml
 config/stack/default/ceph/cluster.yml
 # Role assignment
-role-master/cluster/salt.sls
-role-admin/cluster/salt.sls
+role-master/cluster/salt*.sls
+role-admin/cluster/salt*.sls
 role-mon/cluster/node*.sls
 role-igw/cluster/node[12]*.sls
 role-rgw/cluster/node[13]*.sls
