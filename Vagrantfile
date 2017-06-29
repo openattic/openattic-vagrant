@@ -93,10 +93,10 @@ Vagrant.configure("2") do |config|
     end
 
     node.vm.provision "shell", inline: <<-SHELL
-      echo "192.168.100.200 salt" >> /etc/hosts
-      echo "192.168.100.201 node1" >> /etc/hosts
-      echo "192.168.100.202 node2" >> /etc/hosts
-      echo "192.168.100.203 node3" >> /etc/hosts
+      echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
+      echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
+      echo "192.168.100.202 node2 node2.oa.local" >> /etc/hosts
+      echo "192.168.100.203 node3 node3.oa.local" >> /etc/hosts
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
       mkdir /root/.ssh
       chmod 600 /home/vagrant/.ssh/id_rsa
@@ -150,10 +150,10 @@ Vagrant.configure("2") do |config|
     end
 
     node.vm.provision "shell", inline: <<-SHELL
-      echo "192.168.100.200 salt" >> /etc/hosts
-      echo "192.168.100.201 node1" >> /etc/hosts
-      echo "192.168.100.202 node2" >> /etc/hosts
-      echo "192.168.100.203 node3" >> /etc/hosts
+      echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
+      echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
+      echo "192.168.100.202 node2 node2.oa.local" >> /etc/hosts
+      echo "192.168.100.203 node3 node3.oa.local" >> /etc/hosts
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
       mkdir /root/.ssh
       chmod 600 /home/vagrant/.ssh/id_rsa
@@ -211,10 +211,10 @@ Vagrant.configure("2") do |config|
     end
 
     node.vm.provision "shell", inline: <<-SHELL
-      echo "192.168.100.200 salt" >> /etc/hosts
-      echo "192.168.100.201 node1" >> /etc/hosts
-      echo "192.168.100.202 node2" >> /etc/hosts
-      echo "192.168.100.203 node3" >> /etc/hosts
+      echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
+      echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
+      echo "192.168.100.202 node2 node2.oa.local" >> /etc/hosts
+      echo "192.168.100.203 node3 node3.oa.local" >> /etc/hosts
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
       mkdir /root/.ssh
       chmod 600 /home/vagrant/.ssh/id_rsa
@@ -266,10 +266,10 @@ Vagrant.configure("2") do |config|
     salt.vm.synced_folder ".", "/vagrant", disabled: true
 
     salt.vm.provision "shell", inline: <<-SHELL
-      echo "192.168.100.200 salt" >> /etc/hosts
-      echo "192.168.100.201 node1" >> /etc/hosts
-      echo "192.168.100.202 node2" >> /etc/hosts
-      echo "192.168.100.203 node3" >> /etc/hosts
+      echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
+      echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
+      echo "192.168.100.202 node2 node2.oa.local" >> /etc/hosts
+      echo "192.168.100.203 node3 node3.oa.local" >> /etc/hosts
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
       mkdir /root/.ssh
       chmod 600 /home/vagrant/.ssh/id_rsa
