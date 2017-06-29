@@ -65,6 +65,7 @@ Vagrant.configure("2") do |config|
   config.vm.define :node1 do |node|
     node.vm.hostname = "node1.oa.local"
     node.vm.network :private_network, ip: "192.168.100.201"
+    node.vm.network :private_network, ip: "192.168.170.201"
 
     node.vm.provision "file", source: "keys/id_rsa",
                               destination:".ssh/id_rsa"
@@ -122,6 +123,7 @@ Vagrant.configure("2") do |config|
   config.vm.define :node2 do |node|
     node.vm.hostname = "node2.oa.local"
     node.vm.network :private_network, ip: "192.168.100.202"
+    node.vm.network :private_network, ip: "192.168.170.202"
 
     node.vm.provision "file", source: "keys/id_rsa",
                               destination:".ssh/id_rsa"
@@ -183,6 +185,7 @@ Vagrant.configure("2") do |config|
   config.vm.define :node3 do |node|
     node.vm.hostname = "node3.oa.local"
     node.vm.network :private_network, ip: "192.168.100.203"
+    node.vm.network :private_network, ip: "192.168.170.203"
 
     node.vm.provision "file", source: "keys/id_rsa",
                               destination:".ssh/id_rsa"
