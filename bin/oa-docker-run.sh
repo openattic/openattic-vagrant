@@ -1,3 +1,7 @@
+pushd /home/vagrant/openattic/backend
+find * -name '*.pyc' | xargs rm
+popd
+
 if [[ "$(sudo docker images -q openattic-dev 2> /dev/null)" == "" ]]; then
   pushd /home/vagrant/openattic-docker/openattic-dev/opensuse_leap_42.2
   sudo docker build --network=host -t openattic-dev .
