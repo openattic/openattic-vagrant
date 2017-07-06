@@ -248,8 +248,8 @@ Vagrant.configure("2") do |config|
   end
 
   if create_openattic_node then
-    config.vm.define :node_oa do |node|
-      node.vm.hostname = "node-oa.oa.local"
+    config.vm.define :openattic do |node|
+      node.vm.hostname = "openattic.oa.local"
       node.vm.network :private_network, ip: "192.168.100.204"
 
       node.vm.provision "file", source: "keys/id_rsa",
@@ -261,7 +261,7 @@ Vagrant.configure("2") do |config|
 
 
       node.vm.provision "shell", inline: <<-SHELL
-        echo "192.168.100.204 node-oa" >> /etc/hosts
+        echo "192.168.100.204 openattic openattic.oa.local" >> /etc/hosts
         echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
         echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
         echo "192.168.100.202 node2 node2.oa.local" >> /etc/hosts
@@ -278,9 +278,19 @@ Vagrant.configure("2") do |config|
 
         zypper ar http://download.suse.de/ibs/SUSE:/SLE-12-SP3:/Update:/Products:/SES5/images/repo/SUSE-Enterprise-Storage-5-POOL-x86_64-Media1/ SES5_Media1
         zypper --gpg-auto-import-keys ref
-        hostname node-oa
+        hostname openattic
 
         SuSEfirewall2 off
+
+        while : ; do
+          PROVISIONED_NODES=`ls -l /tmp/ready-salt 2>/dev/null | wc -l`
+          echo "waiting for salt (${PROVISIONED_NODES}/1)";
+          [[ "${PROVISIONED_NODES}" != "1" ]] || break
+          sleep 10;
+          scp -o StrictHostKeyChecking=no salt:/tmp/ready /tmp/ready-salt 2>/dev/null;
+        done
+
+        sleep 5
 
         scp -o StrictHostKeyChecking=no -r salt:/etc/ceph /etc
         chmod -R 664 /etc/ceph
@@ -360,13 +370,14 @@ Vagrant.configure("2") do |config|
         PROVISIONED_NODES=`ls -l /tmp/ready-* 2>/dev/null | wc -l`
         echo "waiting for node1, node2 and node3 (${PROVISIONED_NODES}/3)";
         [[ "${PROVISIONED_NODES}" != "3" ]] || break
-        sleep 2;
-        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node1;
-        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node2;
-        scp -o StrictHostKeyChecking=no node3:/tmp/ready /tmp/ready-node3;
+        sleep 10;
+        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node1 2>/dev/null;
+        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node2 2>/dev/null;
+        scp -o StrictHostKeyChecking=no node3:/tmp/ready /tmp/ready-node3 2>/dev/null;
       done
 
       sleep 5
+
       salt-key -Ay
 
       cd /home/vagrant/DeepSea
@@ -436,6 +447,8 @@ EOF
         DEV_ENV='true' salt-run state.orch ceph.stage.4
 
         chmod 644 /etc/ceph/ceph.client.admin.keyring
+
+        touch /tmp/ready
       fi
     SHELL
   end
