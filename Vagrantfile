@@ -35,6 +35,9 @@ nfs_auto_export = settings.has_key?('nfs_auto_export') ?
 build_openattic_docker_image = settings.has_key?('build_openattic_docker_image') ?
                                settings['build_openattic_docker_image'] : false
 
+create_openattic_node = settings.has_key?('create_openattic_node') ?
+                        settings['create_openattic_node'] : false
+
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
 
@@ -242,6 +245,47 @@ Vagrant.configure("2") do |config|
 
       touch /tmp/ready
     SHELL
+  end
+
+  if create_openattic_node then
+    config.vm.define :node_oa do |node|
+      node.vm.hostname = "node-oa.oa.local"
+      node.vm.network :private_network, ip: "192.168.100.204"
+
+      node.vm.provision "file", source: "keys/id_rsa",
+                                destination:".ssh/id_rsa"
+      node.vm.provision "file", source: "keys/id_rsa.pub",
+                                destination:".ssh/id_rsa.pub"
+
+      node.vm.synced_folder ".", "/vagrant", disabled: true
+
+
+      node.vm.provision "shell", inline: <<-SHELL
+        echo "192.168.100.204 node-oa" >> /etc/hosts
+        echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
+        echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
+        echo "192.168.100.202 node2 node2.oa.local" >> /etc/hosts
+        echo "192.168.100.203 node3 node3.oa.local" >> /etc/hosts
+        cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+        mkdir /root/.ssh
+        chmod 600 /home/vagrant/.ssh/id_rsa
+        cp /home/vagrant/.ssh/id_rsa* /root/.ssh/
+        cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+
+        ssh-keyscan -H salt >> ~/.ssh/known_hosts
+        ssh-keyscan -H node1 >> ~/.ssh/known_hosts
+        ssh-keyscan -H node2 >> ~/.ssh/known_hosts
+
+        zypper ar http://download.suse.de/ibs/SUSE:/SLE-12-SP3:/Update:/Products:/SES5/images/repo/SUSE-Enterprise-Storage-5-POOL-x86_64-Media1/ SES5_Media1
+        zypper --gpg-auto-import-keys ref
+        hostname node-oa
+
+        SuSEfirewall2 off
+
+        scp -o StrictHostKeyChecking=no -r salt:/etc/ceph /etc
+        chmod -R 664 /etc/ceph
+      SHELL
+    end
   end
 
   config.vm.define :salt do |salt|
