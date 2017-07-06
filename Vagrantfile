@@ -282,6 +282,16 @@ Vagrant.configure("2") do |config|
 
         SuSEfirewall2 off
 
+        while : ; do
+          PROVISIONED_NODES=`ls -l /tmp/ready-salt 2>/dev/null | wc -l`
+          echo "waiting for salt (${PROVISIONED_NODES}/1)";
+          [[ "${PROVISIONED_NODES}" != "1" ]] || break
+          sleep 10;
+          scp -o StrictHostKeyChecking=no salt:/tmp/ready /tmp/ready-salt 2>/dev/null;
+        done
+
+        sleep 5
+
         scp -o StrictHostKeyChecking=no -r salt:/etc/ceph /etc
         chmod -R 664 /etc/ceph
       SHELL
@@ -360,13 +370,14 @@ Vagrant.configure("2") do |config|
         PROVISIONED_NODES=`ls -l /tmp/ready-* 2>/dev/null | wc -l`
         echo "waiting for node1, node2 and node3 (${PROVISIONED_NODES}/3)";
         [[ "${PROVISIONED_NODES}" != "3" ]] || break
-        sleep 2;
-        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node1;
-        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node2;
-        scp -o StrictHostKeyChecking=no node3:/tmp/ready /tmp/ready-node3;
+        sleep 10;
+        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node1 2>/dev/null;
+        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node2 2>/dev/null;
+        scp -o StrictHostKeyChecking=no node3:/tmp/ready /tmp/ready-node3 2>/dev/null;
       done
 
       sleep 5
+
       salt-key -Ay
 
       cd /home/vagrant/DeepSea
@@ -436,6 +447,8 @@ EOF
         DEV_ENV='true' salt-run state.orch ceph.stage.4
 
         chmod 644 /etc/ceph/ceph.client.admin.keyring
+
+        touch /tmp/ready
       fi
     SHELL
   end
