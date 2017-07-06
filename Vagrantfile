@@ -412,6 +412,7 @@ role-mon/cluster/node*.sls
 role-igw/cluster/node[12]*.sls
 role-rgw/cluster/node[13]*.sls
 role-mon/stack/default/ceph/minions/node*.yml
+role-mgr/cluster/node[12]*.sls
 EOF
         chown salt:salt /srv/pillar/ceph/proposals/policy.cfg
         cat > /srv/pillar/ceph/rgw.sls <<EOF
