@@ -1,4 +1,4 @@
-# vagrant-openattic-docker
+# openattic-vagrant
 
 This repository contains configuration files that simplify the setup of the development environment to work on [openATTIC](http://openattic.org) with a [ceph](https://ceph.com/) cluster managed by [DeepSea](https://github.com/SUSE/DeepSea).
 
