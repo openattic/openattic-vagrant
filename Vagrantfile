@@ -38,6 +38,13 @@ build_openattic_docker_image = settings.has_key?('build_openattic_docker_image')
 create_openattic_node = settings.has_key?('create_openattic_node') ?
                         settings['create_openattic_node'] : false
 
+num_nodes = settings.has_key?('num_nodes') ?
+            settings['num_nodes'] : 3
+
+raise Vagrant::Errors::VagrantError.new,
+  "Invalid 'num_nodes' (#{num_nodes}).\n\n" \
+  "Supported values: 2 or 3" unless ([2,3]).include?(num_nodes)
+
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
 
@@ -123,130 +130,134 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
-  config.vm.define :node2 do |node|
-    node.vm.hostname = "node2.oa.local"
-    node.vm.network :private_network, ip: "192.168.100.202"
-    node.vm.network :private_network, ip: "192.168.170.202"
+  if num_nodes > 1 then
+    config.vm.define :node2 do |node|
+        node.vm.hostname = "node2.oa.local"
+        node.vm.network :private_network, ip: "192.168.100.202"
+        node.vm.network :private_network, ip: "192.168.170.202"
 
-    node.vm.provision "file", source: "keys/id_rsa",
-                              destination:".ssh/id_rsa"
-    node.vm.provision "file", source: "keys/id_rsa.pub",
-                              destination:".ssh/id_rsa.pub"
+        node.vm.provision "file", source: "keys/id_rsa",
+                                destination:".ssh/id_rsa"
+        node.vm.provision "file", source: "keys/id_rsa.pub",
+                                destination:".ssh/id_rsa.pub"
 
-    node.vm.synced_folder ".", "/vagrant", disabled: true
+        node.vm.synced_folder ".", "/vagrant", disabled: true
 
-    node.vm.provider "libvirt" do |lv|
-      (1..num_volumes).each do |d|
-        lv.storage :file, size: volume_size, type: 'raw'
-      end
-    end
-    node.vm.provider :virtualbox do |vb|
-      for i in 1..num_volumes do
-        file_to_disk = "./disks/#{node.vm.hostname}-disk#{i}.vmdk"
-        unless File.exist?(file_to_disk)
-          vb.customize ['createmedium', 'disk', '--filename', file_to_disk,
-            '--size', volume_size]
-          vb.customize ['storageattach', :id,
-            '--storagectl', 'SATA Controller',
-            '--port', i, '--device', 0,
-            '--type', 'hdd', '--medium', file_to_disk]
+        node.vm.provider "libvirt" do |lv|
+          (1..num_volumes).each do |d|
+            lv.storage :file, size: volume_size, type: 'raw'
+          end
         end
-      end
-    end
-
-    node.vm.provision "shell", inline: <<-SHELL
-      echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
-      echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
-      echo "192.168.100.202 node2 node2.oa.local" >> /etc/hosts
-      echo "192.168.100.203 node3 node3.oa.local" >> /etc/hosts
-      cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
-      mkdir /root/.ssh
-      chmod 600 /home/vagrant/.ssh/id_rsa
-      cp /home/vagrant/.ssh/id_rsa* /root/.ssh/
-      cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
-      hostname node2
-
-      ssh-keyscan -H salt >> ~/.ssh/known_hosts
-      ssh-keyscan -H node1 >> ~/.ssh/known_hosts
-      ssh-keyscan -H node3 >> ~/.ssh/known_hosts
-
-      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
-      zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
-      zypper --gpg-auto-import-keys ref
-
-      SuSEfirewall2 off
-
-      zypper -n install ntp
-      zypper -n install salt-minion
-      systemctl enable salt-minion
-      systemctl start salt-minion
-
-      touch /tmp/ready
-    SHELL
-  end
-
-  config.vm.define :node3 do |node|
-    node.vm.hostname = "node3.oa.local"
-    node.vm.network :private_network, ip: "192.168.100.203"
-    node.vm.network :private_network, ip: "192.168.170.203"
-
-    node.vm.provision "file", source: "keys/id_rsa",
-                              destination:".ssh/id_rsa"
-    node.vm.provision "file", source: "keys/id_rsa.pub",
-                              destination:".ssh/id_rsa.pub"
-
-    node.vm.synced_folder ".", "/vagrant", disabled: true
-
-    node.vm.provider "libvirt" do |lv|
-      (1..num_volumes).each do |d|
-        lv.storage :file, size: volume_size, type: 'raw'
-      end
-    end
-    node.vm.provider :virtualbox do |vb|
-      for i in 1..num_volumes do
-        file_to_disk = "./disks/#{node.vm.hostname}-disk#{i}.vmdk"
-        unless File.exist?(file_to_disk)
-          vb.customize ['createmedium', 'disk', '--filename', file_to_disk,
-            '--size', volume_size]
-          vb.customize ['storageattach', :id,
-            '--storagectl', 'SATA Controller',
-            '--port', i, '--device', 0,
-            '--type', 'hdd', '--medium', file_to_disk]
+        node.vm.provider :virtualbox do |vb|
+          for i in 1..num_volumes do
+            file_to_disk = "./disks/#{node.vm.hostname}-disk#{i}.vmdk"
+            unless File.exist?(file_to_disk)
+              vb.customize ['createmedium', 'disk', '--filename', file_to_disk,
+                '--size', volume_size]
+              vb.customize ['storageattach', :id,
+                '--storagectl', 'SATA Controller',
+                '--port', i, '--device', 0,
+                '--type', 'hdd', '--medium', file_to_disk]
+            end
+          end
         end
-      end
+
+        node.vm.provision "shell", inline: <<-SHELL
+        echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
+        echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
+        echo "192.168.100.202 node2 node2.oa.local" >> /etc/hosts
+        echo "192.168.100.203 node3 node3.oa.local" >> /etc/hosts
+        cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+        mkdir /root/.ssh
+        chmod 600 /home/vagrant/.ssh/id_rsa
+        cp /home/vagrant/.ssh/id_rsa* /root/.ssh/
+        cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+        hostname node2
+
+        ssh-keyscan -H salt >> ~/.ssh/known_hosts
+        ssh-keyscan -H node1 >> ~/.ssh/known_hosts
+        ssh-keyscan -H node3 >> ~/.ssh/known_hosts
+
+        zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
+        zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
+        zypper --gpg-auto-import-keys ref
+
+        SuSEfirewall2 off
+
+        zypper -n install ntp
+        zypper -n install salt-minion
+        systemctl enable salt-minion
+        systemctl start salt-minion
+
+        touch /tmp/ready
+        SHELL
     end
-
-    node.vm.provision "shell", inline: <<-SHELL
-      echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
-      echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
-      echo "192.168.100.202 node2 node2.oa.local" >> /etc/hosts
-      echo "192.168.100.203 node3 node3.oa.local" >> /etc/hosts
-      cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
-      mkdir /root/.ssh
-      chmod 600 /home/vagrant/.ssh/id_rsa
-      cp /home/vagrant/.ssh/id_rsa* /root/.ssh/
-      cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
-
-      ssh-keyscan -H salt >> ~/.ssh/known_hosts
-      ssh-keyscan -H node1 >> ~/.ssh/known_hosts
-      ssh-keyscan -H node2 >> ~/.ssh/known_hosts
-
-      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
-      zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
-      zypper --gpg-auto-import-keys ref
-      hostname node3
-
-      SuSEfirewall2 off
-
-      zypper -n install ntp
-      zypper -n install salt-minion
-      systemctl enable salt-minion
-      systemctl start salt-minion
-
-      touch /tmp/ready
-    SHELL
   end
+  
+  if num_nodes > 2 then
+    config.vm.define :node3 do |node|
+        node.vm.hostname = "node3.oa.local"
+        node.vm.network :private_network, ip: "192.168.100.203"
+        node.vm.network :private_network, ip: "192.168.170.203"
 
+        node.vm.provision "file", source: "keys/id_rsa",
+                                destination:".ssh/id_rsa"
+        node.vm.provision "file", source: "keys/id_rsa.pub",
+                                destination:".ssh/id_rsa.pub"
+
+        node.vm.synced_folder ".", "/vagrant", disabled: true
+
+        node.vm.provider "libvirt" do |lv|
+          (1..num_volumes).each do |d|
+            lv.storage :file, size: volume_size, type: 'raw'
+          end
+        end
+        node.vm.provider :virtualbox do |vb|
+          for i in 1..num_volumes do
+            file_to_disk = "./disks/#{node.vm.hostname}-disk#{i}.vmdk"
+            unless File.exist?(file_to_disk)
+            vb.customize ['createmedium', 'disk', '--filename', file_to_disk,
+                '--size', volume_size]
+            vb.customize ['storageattach', :id,
+                '--storagectl', 'SATA Controller',
+                '--port', i, '--device', 0,
+                '--type', 'hdd', '--medium', file_to_disk]
+            end
+          end
+        end
+
+        node.vm.provision "shell", inline: <<-SHELL
+        echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
+        echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
+        echo "192.168.100.202 node2 node2.oa.local" >> /etc/hosts
+        echo "192.168.100.203 node3 node3.oa.local" >> /etc/hosts
+        cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+        mkdir /root/.ssh
+        chmod 600 /home/vagrant/.ssh/id_rsa
+        cp /home/vagrant/.ssh/id_rsa* /root/.ssh/
+        cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+
+        ssh-keyscan -H salt >> ~/.ssh/known_hosts
+        ssh-keyscan -H node1 >> ~/.ssh/known_hosts
+        ssh-keyscan -H node2 >> ~/.ssh/known_hosts
+
+        zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
+        zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
+        zypper --gpg-auto-import-keys ref
+        hostname node3
+
+        SuSEfirewall2 off
+
+        zypper -n install ntp
+        zypper -n install salt-minion
+        systemctl enable salt-minion
+        systemctl start salt-minion
+
+        touch /tmp/ready
+        SHELL
+    end
+  end
+  
   if create_openattic_node then
     config.vm.define :openattic do |node|
       node.vm.hostname = "openattic.oa.local"
@@ -322,6 +333,15 @@ Vagrant.configure("2") do |config|
 
     salt.vm.synced_folder ".", "/vagrant", disabled: true
 
+    roles = {
+        "mon" => "node*",
+        "igw" => ("node[12]*" if num_nodes > 1) || "node*",
+        "rgw" => ("node[13]*" if num_nodes > 2) || "node*",
+        "mds" => ("node[23]*" if num_nodes > 2) || "node*",
+        "ganesha" => ("node[23]*" if num_nodes > 2) || "node*",
+        "mgr" => ("node[12]*" if num_nodes > 1) || "node*"
+    }
+    
     salt.vm.provision "shell", inline: <<-SHELL
       echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
       echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
@@ -368,10 +388,10 @@ Vagrant.configure("2") do |config|
 
       while : ; do
         PROVISIONED_NODES=`ls -l /tmp/ready-* 2>/dev/null | wc -l`
-        echo "waiting for node1, node2 and node3 (${PROVISIONED_NODES}/3)";
-        [[ "${PROVISIONED_NODES}" != "3" ]] || break
+        echo "waiting for nodes (${PROVISIONED_NODES}/#{num_nodes})";
+        [[ "${PROVISIONED_NODES}" != "#{num_nodes}" ]] || break
         sleep 10;
-        scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node1 2>/dev/null;
+        scp -o StrictHostKeyChecking=no node1:/tmp/ready /tmp/ready-node1 2>/dev/null;
         scp -o StrictHostKeyChecking=no node2:/tmp/ready /tmp/ready-node2 2>/dev/null;
         scp -o StrictHostKeyChecking=no node3:/tmp/ready /tmp/ready-node3 2>/dev/null;
       done
@@ -419,11 +439,13 @@ config/stack/default/ceph/cluster.yml
 # Role assignment
 role-master/cluster/salt*.sls
 role-admin/cluster/salt*.sls
-role-mon/cluster/node*.sls
-role-igw/cluster/node[12]*.sls
-role-rgw/cluster/node[13]*.sls
-role-mon/stack/default/ceph/minions/node*.yml
-role-mgr/cluster/node[12]*.sls
+role-mon/cluster/#{roles['mon']}.sls
+role-igw/cluster/#{roles['igw']}.sls
+role-rgw/cluster/#{roles['rgw']}.sls
+role-mds/cluster/#{roles['mds']}.sls
+role-mon/stack/default/ceph/minions/#{roles['mon']}.yml
+role-ganesha/cluster/#{roles['ganesha']}.sls
+role-mgr/cluster/#{roles['mgr']}.sls
 EOF
         chown salt:salt /srv/pillar/ceph/proposals/policy.cfg
         cat > /srv/pillar/ceph/rgw.sls <<EOF

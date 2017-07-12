@@ -8,8 +8,8 @@ Vagrant will instantiate four VMs using an `opensuse/openSUSE-42.2-x86_64` box:
 |----------| ----------|----------| ----------|
 | `salt` | 192.168.100.200 | **master**, **admin** |Run [openattic-docker](https://github.com/openattic/openattic-docker) container or openattic (salt-master + salt-minion)|
 | `node1` | 192.168.100.201 | **mon**, **igw**, **rgw**, **mgr** | Run ceph (salt-minion) |
-| `node2` | 192.168.100.202 | **mon**, **igw**, **mgr** | Run ceph (salt-minion) |
-| `node3` | 192.168.100.203 | **mon**, **rgw** | Run ceph (salt-minion) |
+| `node2` | 192.168.100.202 | **mon**, **igw**, **ganesha**, **mgr** | Run ceph (salt-minion) |
+| `node3` | 192.168.100.203 | **mon**, **rgw**, **ganesha** | Run ceph (salt-minion) |
 
 ## Requirements
 
@@ -41,6 +41,7 @@ Configuration resides in the `settings.yml` file that contains the custom config
 | `nfs_auto_export` | boolean | `true` | Enables/disables vagrant from changing the contents of `/etc/exports`
 | `build_openattic_docker_image` | boolean | `false` | Enables/disables the build of the openattic docker image during provisioning
 | `create_openattic_node` | boolean | `false` | Creates a new node to test openATTIC installations through zypper/rpm
+| `num_nodes` | integer | `3` | The number of nodes 
 
 ### Spin up cluster
 
