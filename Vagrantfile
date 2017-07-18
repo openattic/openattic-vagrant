@@ -389,7 +389,6 @@ Vagrant.configure("2") do |config|
       systemctl enable salt-minion
       systemctl start salt-minion
 
-
       git clone #{openattic_docker_repo} openattic-docker
       cd openattic-docker
       git checkout #{openattic_docker_branch}
@@ -443,8 +442,8 @@ EOF
 # Cluster assignment
 cluster-ceph/cluster/*.sls
 # Hardware Profile
-profile-*-1/cluster/*.sls
-profile-*-1/stack/default/ceph/minions/*yml
+profile-default/cluster/*.sls
+profile-default/stack/default/ceph/minions/*yml
 # Common configuration
 config/stack/default/global.yml
 config/stack/default/ceph/cluster.yml
