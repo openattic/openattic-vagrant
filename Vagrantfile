@@ -119,6 +119,7 @@ Vagrant.configure("2") do |config|
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper ar http://download.opensuse.org/repositories/home:/tserong/openSUSE_Factory/home:tserong.repo
       zypper ar http://download.opensuse.org/repositories/home:/jfajerski/openSUSE_Leap_42.2/home:jfajerski.repo
+      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph/openSUSE_Leap_42.3/filesystems:ceph.repo
       zypper --gpg-auto-import-keys ref
 
       SuSEfirewall2 off
@@ -184,6 +185,7 @@ Vagrant.configure("2") do |config|
         zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
         zypper ar http://download.opensuse.org/repositories/home:/tserong/openSUSE_Factory/home:tserong.repo
         zypper ar http://download.opensuse.org/repositories/home:/jfajerski/openSUSE_Leap_42.2/home:jfajerski.repo
+        zypper ar http://download.opensuse.org/repositories/filesystems:/ceph/openSUSE_Leap_42.3/filesystems:ceph.repo
         zypper --gpg-auto-import-keys ref
 
         SuSEfirewall2 off
@@ -249,6 +251,7 @@ Vagrant.configure("2") do |config|
         zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
         zypper ar http://download.opensuse.org/repositories/home:/tserong/openSUSE_Factory/home:tserong.repo
         zypper ar http://download.opensuse.org/repositories/home:/jfajerski/openSUSE_Leap_42.2/home:jfajerski.repo
+        zypper ar http://download.opensuse.org/repositories/filesystems:/ceph/openSUSE_Leap_42.3/filesystems:ceph.repo
         zypper --gpg-auto-import-keys ref
         hostname node3
 
@@ -366,6 +369,7 @@ Vagrant.configure("2") do |config|
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper ar http://download.opensuse.org/repositories/home:/tserong/openSUSE_Factory/home:tserong.repo
       zypper ar http://download.opensuse.org/repositories/home:/jfajerski/openSUSE_Leap_42.2/home:jfajerski.repo
+      zypper ar http://download.opensuse.org/repositories/filesystems:/ceph/openSUSE_Leap_42.3/filesystems:ceph.repo
       zypper --gpg-auto-import-keys ref
       zypper ar https://yum.dockerproject.org/repo/main/opensuse/13.2/ docker-main
       zypper --no-gpg-checks ref
