@@ -392,7 +392,7 @@ Vagrant.configure("2") do |config|
       git clone #{openattic_docker_repo} openattic-docker
       cd openattic-docker
       git checkout #{openattic_docker_branch}
-      cd openattic-dev/opensuse_leap_42.2
+      cd openattic-dev/opensuse_leap_42.3
       [[ "#{build_openattic_docker_image}" == "true" ]] && docker build -t openattic-dev .
 
       SuSEfirewall2 off
