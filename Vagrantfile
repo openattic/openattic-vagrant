@@ -116,6 +116,7 @@ Vagrant.configure("2") do |config|
       hostname node1
 
       zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
+      zypper ar http://download.opensuse.org/repositories/devel:languages:python/openSUSE_Leap_42.3/devel:languages:python.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper ar http://download.opensuse.org/repositories/home:/tserong/openSUSE_Factory/home:tserong.repo
       zypper ar http://download.opensuse.org/repositories/home:/jfajerski/openSUSE_Leap_42.2/home:jfajerski.repo
@@ -182,6 +183,7 @@ Vagrant.configure("2") do |config|
         ssh-keyscan -H node3 >> ~/.ssh/known_hosts
 
         zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
+        zypper ar http://download.opensuse.org/repositories/devel:languages:python/openSUSE_Leap_42.3/devel:languages:python.repo
         zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
         zypper ar http://download.opensuse.org/repositories/home:/tserong/openSUSE_Factory/home:tserong.repo
         zypper ar http://download.opensuse.org/repositories/home:/jfajerski/openSUSE_Leap_42.2/home:jfajerski.repo
@@ -248,6 +250,7 @@ Vagrant.configure("2") do |config|
         ssh-keyscan -H node2 >> ~/.ssh/known_hosts
 
         zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
+        zypper ar http://download.opensuse.org/repositories/devel:languages:python/openSUSE_Leap_42.3/devel:languages:python.repo
         zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
         zypper ar http://download.opensuse.org/repositories/home:/tserong/openSUSE_Factory/home:tserong.repo
         zypper ar http://download.opensuse.org/repositories/home:/jfajerski/openSUSE_Leap_42.2/home:jfajerski.repo
@@ -366,6 +369,7 @@ Vagrant.configure("2") do |config|
       chmod 755 -R bin/
 
       zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
+      zypper ar http://download.opensuse.org/repositories/devel:languages:python/openSUSE_Leap_42.3/devel:languages:python.repo
       zypper ar http://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.1/home:swiftgist.repo
       zypper ar http://download.opensuse.org/repositories/home:/tserong/openSUSE_Factory/home:tserong.repo
       zypper ar http://download.opensuse.org/repositories/home:/jfajerski/openSUSE_Leap_42.2/home:jfajerski.repo
