@@ -20,6 +20,10 @@ openattic_docker_repo = settings.has_key?('openattic_docker_repo') ?
                         settings['openattic_docker_repo'] :
                         'https://github.com/openattic/openattic-docker.git'
 
+openattic_docker_is_remote = openattic_docker_repo.start_with?('http://') ||
+                             openattic_docker_repo.start_with?('https://') ||
+                             openattic_docker_repo.start_with?('git@')
+
 openattic_docker_branch = settings.has_key?('openattic_docker_branch') ?
                           settings['openattic_docker_branch'] : 'master'
 
@@ -343,6 +347,13 @@ Vagrant.configure("2") do |config|
                             :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1'],
                             :linux__nfs_options => ['rw','no_subtree_check','all_squash','insecure']
 
+    if !openattic_docker_is_remote then
+      salt.vm.synced_folder openattic_docker_repo, '/home/vagrant/openattic-docker', type: 'nfs',
+                            :nfs_export => nfs_auto_export,
+                            :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1'],
+                            :linux__nfs_options => ['rw','no_subtree_check','all_squash','insecure']
+    end
+
     salt.vm.synced_folder ".", "/vagrant", disabled: true
 
     roles = {
@@ -353,7 +364,7 @@ Vagrant.configure("2") do |config|
         "ganesha" => ("node[23]*" if num_nodes > 2) || "node*",
         "mgr" => ("node[12]*" if num_nodes > 1) || "node*"
     }
-    
+
     salt.vm.provision "shell", inline: <<-SHELL
       echo "192.168.100.200 salt salt.oa.local" >> /etc/hosts
       echo "192.168.100.201 node1 node1.oa.local" >> /etc/hosts
@@ -394,9 +405,14 @@ Vagrant.configure("2") do |config|
       systemctl enable salt-minion
       systemctl start salt-minion
 
-      git clone #{openattic_docker_repo} openattic-docker
-      cd openattic-docker
-      git checkout #{openattic_docker_branch}
+      if [[ #{openattic_docker_is_remote} == "true" ]]; then
+        git clone #{openattic_docker_repo} openattic-docker
+        cd openattic-docker
+        git checkout #{openattic_docker_branch}
+      else
+        cd openattic-docker
+      fi
+
       cd openattic-dev/opensuse_leap_42.3
       [[ "#{build_openattic_docker_image}" == "true" ]] && docker build -t openattic-dev .
 
