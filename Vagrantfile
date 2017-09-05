@@ -366,7 +366,8 @@ Vagrant.configure("2") do |config|
       cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
       hostname salt
 
-      chmod 755 -R bin/
+      chmod 644 bin/*.py
+      chmod 755 bin/*.sh
 
       zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
       zypper ar http://download.opensuse.org/repositories/devel:languages:python/openSUSE_Leap_42.3/devel:languages:python.repo
