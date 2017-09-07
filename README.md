@@ -71,7 +71,11 @@ to install `protractor`and use the following `configs.js` file to run e2e tests:
 'use strict';
 (function(){
   module.exports = {
-    url     : 'http://192.168.100.200/openattic/#/login',
+    urls: {
+      base: 'http://192.168.100.200',
+      ui: '/openattic/#/',
+      api: '/openattic/api/'
+    },
     username: 'openattic',
     password: 'openattic',
     sleep   : 2000,
