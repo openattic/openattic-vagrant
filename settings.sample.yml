@@ -1,5 +1,6 @@
 openattic_repo: ~/openattic
 deepsea_repo: ~/DeepSea
+#openattic_docker_repo: ~/openattic-docker
 
 #libvirt_host: @ip_address@
 #libvirt_user: @user_name@
