@@ -123,3 +123,21 @@ change the option `nfs_auto_export` in your `settings.yml` to `false`.
 Now you're ready to do `vagrant up`, and the openATTIC and DeepSea directories
 will be successfully shared inside your VMs.
 
+### Remove admin password overlay
+
+If you don't want to keep seeing the admin password overlay each time you run
+``vagrant up`` or ``vagrant destroy``, or you are having problems running those
+commands remotely, you can fix that by creating a new Polkit rule.
+
+That can be achieved by creating a user group, adding your user to that group
+and then creating the following file (with the correct group name):
+
+``/etc/polkit-1/rules.d/10.virt.rules``
+```
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.libvirt.unix.manage"
+            && subject.isInGroup("<group_name>")) {
+        return polkit.Result.YES;
+    }
+});
+```
