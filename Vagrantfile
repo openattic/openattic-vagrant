@@ -90,7 +90,7 @@ Vagrant.configure("2") do |config|
 
     node.vm.provider "libvirt" do |lv|
       (1..num_volumes).each do |d|
-        lv.storage :file, size: volume_size, type: 'raw'
+        lv.storage :file, size: volume_size, type: 'qcow2'
       end
     end
     node.vm.provider :virtualbox do |vb|
@@ -153,7 +153,7 @@ Vagrant.configure("2") do |config|
 
         node.vm.provider "libvirt" do |lv|
           (1..num_volumes).each do |d|
-            lv.storage :file, size: volume_size, type: 'raw'
+            lv.storage :file, size: volume_size, type: 'qcow2'
           end
         end
         node.vm.provider :virtualbox do |vb|
@@ -221,7 +221,7 @@ Vagrant.configure("2") do |config|
 
         node.vm.provider "libvirt" do |lv|
           (1..num_volumes).each do |d|
-            lv.storage :file, size: volume_size, type: 'raw'
+            lv.storage :file, size: volume_size, type: 'qcow2'
           end
         end
         node.vm.provider :virtualbox do |vb|
